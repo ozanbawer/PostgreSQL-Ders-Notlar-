@@ -109,6 +109,78 @@ LIMIT 10 -- gösterilecek veri sayısını limitlendirme
 OFFSET 5; -- baştan atlanacak veri sayısını belirtme
 /* GENEL TEKRAR*/
 
+                ##VERİ TABANI OLUŞTURMA
+
+/* YENİ VERİ TABANI OLUŞTURMA (psql shell üzerinde) */
+-- \l : veri tabanlarını sıralar, 
+-- \c vtismi : vtismi database bağlanır, 
+-- \! cls: sayfayı temizler
+-- \d : çıkış yapar
+-- \dt: tabloları sıralar
+
+CREATE DATABASE vtismi;  
+-- Veri Tabanı oluşturur
+DROP DATABASE vtismi; 
+-- Veri Tabanını siler (o veri tabanından çıkmadan silmez)
+
+-- Veri Tabanına tablolar eklemek için bu syntax kullanılır.
+CREATE TABLE book (  -- book tablosunu oluşturma 
+	"id" SERIAL PRIMARY KEY,   -- id: sütun ismi, SERIAL: veri tipi sıralı sayılar için, PRIMARY KEY: benzersiz sayılar
+	title VARCHAR(255) NOT NULL, -- title: sütun ismi VARCHAR(255) : Veri Tipi karakter için, NOT NULL: Boş olamaz
+	author_name VARCHAR(100) NOT NULL,
+	page_number INT -- INT(INTEGER): veri tipi sayı  (not: veri tipleri için dökümana bakılacak) 
+);
+
+/* NOT: Eğer FOREIGN KEY kullanılacaksa syntaxı 
+"author_id INT REFERENCES author(id)" 
+şeklinde olması gerekiyor bu sayede başka bir tablodaki id'e referans verilerek o tablodaki veri kullanılır */
+
+-- Veri Tabanına tablolar silmek için bu syntax kullanılır.
+DROP TABLE book;
+
+-- Tablolara veri ekleme
+INSERT INTO book (title, author_name, page_number) -- Tabloların ismi (id: Prımary Key otomatik geldiği için yazmaya gerek yok)
+VALUES
+	('kitapismi', 'yazar ismi', 345), 		-- 1. satır
+	.
+	.
+	.
+
+	/* KİTAPLIK VERİ TABANI OLUŞTURMA */
+
+/* YAZAR TABLOSU OLUŞTURMA */
+
+CREATE TABLE author (
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR(100) NOT NULL,
+	"birthday" DATE
+); 
+
+
+/* KİTAP TABLOSU OLUŞTURMA */
+
+CREATE TABLE book (
+	"id" SERIAL PRIMARY KEY,
+	title VARCHAR(100) NOT NULL,
+	author_id INT REFERENCES author(id),
+	page_number INT
+); 
+
+
+/* YAZARLARIN author TABLOSUNA EKLENMESİ */
+INSERT INTO author ("name", birthday) 
+VALUES 
+		('Yaşar Kemal', '1889-02-15'),
+		('Michel De Montaigne', '1916-06-21'),
+		('Sabahattin Ali', '1885-06-01' );
+
+
+/* KİTAPLARIN book TABLOSUNA EKLENMESİ */
+INSERT INTO book (title,author_id,page_number)
+VALUES 
+	('Kuyucaklı Yusuf', 3, 268 ),
+	('Denemeler', 2, 296),
+	('Binboğalar Efsanesi', 1, 281);
 
 
 
