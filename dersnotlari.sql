@@ -139,7 +139,7 @@ CREATE TABLE book (  -- book tablosunu oluşturma
 DROP TABLE book;
 
 -- Tablolara veri ekleme
-INSERT INTO book (title, author_name, page_number) -- Tabloların ismi (id: Prımary Key otomatik geldiği için yazmaya gerek yok)
+INSERT INTO book (title, author_name, page_number) -- Tabloların ismi (id: SERIAL otomatik geldiği için yazmaya gerek yok)
 VALUES
 	('kitapismi', 'yazar ismi', 345), 		-- 1. satır
 	.
@@ -183,7 +183,64 @@ VALUES
 	('Binboğalar Efsanesi', 1, 281);
 
 
+/* FOREIGN KEY KULLANILARAK TABLOLAR ARASI İLİŞKİ KURMA one-to-one */
 
+
+CREATE TABLE "user" (
+	"id" SERIAL PRIMARY KEY,
+	email VARCHAR(150) UNIQUE
+); 
+
+CREATE TABLE user_setting (
+	"id" SERIAL PRIMARY KEY,
+	theme VARCHAR(10), 
+	"logged" BOOLEAN,
+	user_id INT UNIQUE REFERENCES "user"("id")  /* FOREIGN KEY İLİŞKİSİ */
+); 
+
+INSERT INTO "user" (email)
+VALUES
+	('ozanbaran@gmail.com'),
+	('ahmetcan@gmail.com'),
+	('yavuzselim@gmail.com'),
+	('fatih1453@gmail.com');
+
+INSERT INTO user_setting (theme, "logged", user_id)
+VALUES
+	('dark', true, 1),
+	('default', true, 2),
+	('dark', false, 3),
+	('light', false, 4);
+
+/* FOREIGN KEY KULLANILARAK TABLOLAR ARASI İLİŞKİ KURMA many-to-many */
+
+CREATE TABLE employee (
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE project (
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR(50) NOT NULL
+);
+
+
+CREATE TABLE employee_project (
+	employee_id INT REFERENCES employee("id"),
+	project_id INT REFERENCES project("id"),
+	PRIMARY KEY (employee_id, project_id)
+);
+
+
+INSERT INTO project ("name")
+VALUES
+	('data analysis'),
+	('game of survival');
+
+INSERT INTO employee_project (employee_id,project_id)
+VALUES
+	(1,2),
+	(2,1);
 
 
 
