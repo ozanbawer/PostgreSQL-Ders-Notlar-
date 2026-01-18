@@ -242,6 +242,58 @@ VALUES
 	(1,2),
 	(2,1);
 
+/* VERİ GÜNCELLEME */
 
+CREATE TABLE employee (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(50),
+	age INT,
+	salary INT
+); 
+
+INSERT INTO employee (name, age, salary)
+VALUES
+	('Ozan', 35, 72000),
+	('Yusuf', 37, 95000),
+	('Onur', 27, 156000); 
+
+/* TABLODAKİ VERİLERİ GÜNCELLEME İŞLEMİ */
+
+UPDATE employee  --veri güncellenecek tablo
+SET salary = salary*1.50 -- güncellenecek sütun ve güncellemesi
+WHERE age < 30  -- belli şartlara göre güncelleme yapılabilir
+RETURNING "name"  -- değiştirilen satırları gösterir (* : bütün sütunları, sütunismi: sadece o sütunu getirir)
+;
+
+/* TABLODAKİ VERİLERİ SİLME İŞLEMİ */
+
+DELETE FROM employee --veri silinecek tablo
+WHERE id = 2; -- silme işlemi için koşul (koşul olmazsa bütün tablodaki verileri siler)
+RETURNING "name"  -- değiştirilen satırları gösterir (* : bütün sütunları, sütunismi: sadece o sütunu getirir)
+
+/* TABLOYA SÜTUN EKLEME VEYA ÖZELLİK DEĞİŞTİRME */
+
+ALTER TABLE employee -- ekleme yapılacak tablo
+ADD email VARCHAR(100);  -- yeni sütun ekleme işlemi 
+
+ALTER TABLE employee -- ekleme yapılacak tablo
+
+ALTER COLUMN email TYPE VARCHAR(50);  -- mevcut sütun özelliğini değiştirme işlemi TYPE: tipini SET:özelliğini
+ALTER COLUMN email SET NOT NULL; 
+
+ALTER COLUMN "name" SET DEFAULT 'Unknown'; -- mevcut sütuna boş veri yerine bi default veri atar "Unknown" gibi
+
+RENAME COLUMN "name" TO full_name; -- mevcut sütunun ismini değiştirme işlemi
+
+RENAME TO employe_new; -- tablonun ismini değiştirir
+
+DROP COLUMN email; -- mevcut sütunu kaldırır (sütun isminden önce IF EXISTS yazılırsa hata vermez olmayan sütun için)
+
+DROP COLUMN IF EXISTS age, 
+DROP COLUMN IF EXISTS salary;  -- toplu kaldırma işlemi
+
+ALTER TABLE employee -- ekleme yapılacak tablo
+ADD CONSTRAINT unique_email UNIQUE (email); -- mevcut sütuna bi zorunluluk ekleme işlemi (PRIMARY KEY, NOT NULL vs vs )
+DROP CONSTRAINT unique_email -- mevcut zorunluluğu kaldırma işlemi
 
 
