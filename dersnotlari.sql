@@ -445,3 +445,19 @@ CREATE TABLE employeee (
 	/*bi department id silinirse bağlı olduğu tablolardaki aynı id ile ilişki 
 	kurulan başka tablodaki verilerde silinir*/
 )
+
+/* SUBQUERIES (ALT SORGU) 
+Bu sorgular mevcut sorgunun içinde başka bir sorgu için kullanılır */
+
+--SELECT AVG(unit_price)
+--FROM products;
+
+SELECT  product_name, unit_price
+FROM products
+WHERE unit_price > (
+	SELECT AVG(unit_price)  /* Bu sorgu bi subqueries (al sorgu) dur */
+	FROM products			/* Bu sorgu sayesinde ayrı bir ortalama işlemi 
+							yapmadan veya ilerde olacak değişiklikten etkilenmemek için alt sorgu yazılır */
+);
+
+/* Subqueriesler genellikle elde edilen bir sonuç koşulunu kullanırken faydalanılır */
