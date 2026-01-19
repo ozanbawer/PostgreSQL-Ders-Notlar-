@@ -296,4 +296,102 @@ ALTER TABLE employee -- ekleme yapılacak tablo
 ADD CONSTRAINT unique_email UNIQUE (email); -- mevcut sütuna bi zorunluluk ekleme işlemi (PRIMARY KEY, NOT NULL vs vs )
 DROP CONSTRAINT unique_email -- mevcut zorunluluğu kaldırma işlemi
 
+/* İKİ TABLO ARASINDA JOINLER İLE İLİŞKİ KURMA */
 
+CREATE TABLE department (
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR(50) NOT NULL,
+	"city" VARCHAR(50)
+); 
+
+CREATE TABLE employee (
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR(50) NOT NULL,
+	age INT,
+	salary INT,
+	department_id INT REFERENCES department(id)
+); 
+
+INSERT INTO department ("name",city)
+VALUES
+	('HR','Ankara'),
+	('IT', 'İstanbul'),
+	('Finance','İzmir'), 
+	('Marketing', 'Van');
+
+
+INSERT INTO employee ("name", age, salary, department_id)
+VALUES
+	('Ahmet', 29, 3500, 2),
+	('Veysel', 33, 5500, 1),
+	('Ramazan', 31, 5000, 1),
+	('Fatma', 34, 6000, 3),
+	('Samet', 29, 4000, 4),
+	('Ayşe', 33, 7500, 4),
+	('Melisa', 26, 5000, 1),
+	('Taner', 34, 6000, 3);
+*/
+
+/* JOIN YAPISI */
+
+SELECT * FROM employee --Birleştirilecek ilk tabloyu çağırıyoruz
+INNER JOIN department  -- Birleştirilecek ikinci tabloyu çağırıyoruz
+ON employee.department_id = department.id; -- İlişki kurulacak (FOREIGN KEY  ile) ortak tablolar aracılığı ile birleştirme yapılıyor
+-- INNER JOIN eşleşen verileri getirir eşleşmeyenler getirilmez (KESİŞEN KÜME)
+
+SELECT e.name AS employee_name, d.name AS department_name /* sütun isimlerinide değiştirebiliyoruz */
+FROM employee AS e           /* Eğer tablo isimlerini AS ile kısaltmayla "Employee : e , departmen:d" yaparsak */
+INNER JOIN department AS d   /* artık daha sadece ve daha kullanışlı bir yazı olur isim yerine kısaltma kullanılır*/
+ON e.department_id = d.id; -- Ortak sütunların eşleşmesi
+
+
+/* DVDRENTAL VERİ TABANINDAN BİR ÖRNEK
+SELECT CONCAT(c.first_name, ' ', c.last_name) AS full_name, r.rental_date  
+FROM customer AS c
+INNER JOIN rental AS r
+ON c.customer_id = r.customer_id;
+*/
+
+
+
+/* INNER JOIN ile ilgili anlamlı örnek departman toplam maaşları */
+
+SELECT d.name, SUM(e.salary) 
+FROM department AS d      
+INNER JOIN employee AS e 
+ON e.department_id = d.id
+GROUP BY d.name;
+
+/* INNER JOIN lerde tabloların sırası önemli değildir employee yerine department veya tam tersi yazılabilir 
+Kesişim kümesini aldığı için bi fark olmaz ama bu sadece INNER JOIN için geçerlidir */
+
+/* LEFT JOIN KULLANIMI */
+SELECT e.name AS emp_name , d.name AS dept_name
+FROM employee AS e /*İLK TABLO*/
+LEFT /*OUTHER DE YAZILIR*/ JOIN department AS d /*İKİNCİ TABLO*/
+ON e.department_id = d.id;
+
+/* LEFT JOIN kullanıldığında ilk tablodaki bütün veriler ikinci tabloyla eşleşmeyenler dahil getirilir. 
+LEFT JOIN de tabloların kullanım yerleri ilk tabloya göre olduğu için tabloların yeri değişirse sonuç değişir
+*/
+
+/* RIGHT JOIN KULLANIMI */
+SELECT e.name AS emp_name , d.name AS dept_name
+FROM employee AS e /*İLK TABLO*/
+RIGHT JOIN department AS d /*İKİNCİ TABLO*/
+ON e.department_id = d.id;
+
+/* RIGHT JOIN kullanıldığında ikinci tablodaki bütün veriler ilk tabloyla eşleşmeyenler dahil getirilir. 
+RIGHT JOIN de tabloların kullanım yerleri ikinci tabloya göre olduğu için tabloların yeri değişirse sonuç değişir
+*/
+
+/* RIGHT JOIN ve LEFT JOIN gerekli durumlarda kullanıldığında 
+tablolar arasında olmayanları bulmak için kullanılabilir */
+
+/* FULL JOIN KULLANIMI */
+SELECT e.name AS emp_name , d.name AS dept_name
+FROM employee AS e /*İLK TABLO*/
+FULL JOIN department AS d /*İKİNCİ TABLO*/
+ON e.department_id = d.id;
+
+/* FULL JOIN her iki tabloda da bulunan bütün eşleşen ve eşleşmeyen bütün verileri getirir */
