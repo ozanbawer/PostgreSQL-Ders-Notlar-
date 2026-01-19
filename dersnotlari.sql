@@ -395,3 +395,53 @@ FULL JOIN department AS d /*İKİNCİ TABLO*/
 ON e.department_id = d.id;
 
 /* FULL JOIN her iki tabloda da bulunan bütün eşleşen ve eşleşmeyen bütün verileri getirir */
+
+/* NULL VE COALESCE FONKSİYONU */
+
+/* NULL boşluk veya 0 demek değil orda herhangi bir değer olmaması demektir 
+sorgularda WHERE salary IS NULL veya WHERE salary IS NOT NULL yani NULL var mı yada yok mu olarak kullanılır 
+*/
+
+/* COALESCE FONKSİYONU
+Bu özel fonksiyon null olmayan değerleri dönderir
+*/
+
+SELECT e.name AS employee_name,
+COALESCE (e.age, 18) AS employee_age,  -- Tabloda NULL gördüğü yere 18 yazar
+COALESCE (e.salary, 28000) AS employee_salary, -- Tabloda NULL gördüğü yere 28000 yazar
+COALESCE (d.city, 'Unknown') AS department_city -- Tabloda NULL  gördüğü yere Unknown yazar
+FROM employee AS e
+INNER JOIN department AS d
+ON e.department_id = d.id;
+
+
+/* DELETE VE UPDATE İLE İLGİLİ ÖZEL AKSİYONLAR */
+
+/*FOREIGN KEY ile bağlı tablolar arasındaki ilişkide yapılacak 
+silme ve değişikliğin diğer tablolara yansımasını kontrol eder*/
+/*Bu özellikler tablo oluşturulurken verilirse daha sağlıklı olur ama sonradan da eklenir*/
+
+/*
+ON DELETE NO ACTION  : Standart gelen özellik silmeye izin vermez
+ON DELETE RESTRICT	 : Standart gelen özellik silmeyi yasaklar
+ON DELETE CASCADE    : Bağlı verilerinde silinmesini sağlar
+ON DELETE SET DEFAULT : silinen yer için belirlenen bi default değer atar
+ON DELETE SET NULL		: silinen yer için NULL atar
+*/
+
+/*
+ON UPDATE NO ACTION  : Standart gelen özellik değiştirmeye izin vermez
+ON UPDATE RESTRICT	 : Standart gelen özellik değiştirmeyi yasaklar
+ON UPDATE CASCADE    : Bağlı verilerinde değiştirilmesini sağlar
+ON UPDATE SET DEFAULT : değişen yer için belirlenen bi default değer atar
+ON UPDATE SET NULL		: değişen yer için NULL atar
+*/
+
+/* BU ÖZELLİKLERİN SYNTAX KULLANIMI*/ 
+CREATE TABLE employeee (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(50),
+	department_id INT REFERENCES department(id) ON DELETE CASCADE   
+	/*bi department id silinirse bağlı olduğu tablolardaki aynı id ile ilişki 
+	kurulan başka tablodaki verilerde silinir*/
+)
